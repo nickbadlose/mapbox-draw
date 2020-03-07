@@ -1,24 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+// import ReactDOM from "react-dom";
+import ReactMapboxGl from "react-mapbox-gl";
+import DrawControl from "react-mapbox-gl-draw";
+import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+
+import "./styles.css";
+
+const Map = ReactMapboxGl({
+  accessToken:
+    "pk.eyJ1IjoiY3ljbGluZ2lzZnVuIiwiYSI6ImNrN2Z6cWIzNjA3bnAzZnBlbzVseWkxYWYifQ.U9iDr2Ez6ryAqDlkDK7jeA"
+});
 
 function App() {
+  const onDrawCreate = ({ features }) => {
+    console.log(features);
+  };
+
+  const onDrawUpdate = ({ features }) => {
+    console.log(features);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h2>Welcome to react-mapbox-gl-draw</h2>
+      <Map
+        style="mapbox://styles/mapbox/streets-v9" // eslint-disable-line
+        containerStyle={{
+          height: "600px",
+          width: "100vw"
+        }}
+      >
+        <DrawControl onDrawCreate={onDrawCreate} onDrawUpdate={onDrawUpdate} />
+      </Map>
     </div>
   );
 }
