@@ -1,65 +1,85 @@
-import React from "react";
+import React from 'react';
 // import ReactDOM from "react-dom";
-import ReactMapboxGl, {Layer, Feature} from "react-mapbox-gl";
-import DrawControl from "react-mapbox-gl-draw";
-import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+import ReactMapboxGl, { Layer, Feature, Marker, Popup } from 'react-mapbox-gl';
+import DrawControl from 'react-mapbox-gl-draw';
+import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
+import location from './images/location.png'
 
-import "./styles.css";
+import './styles.css';
 
 const Map = ReactMapboxGl({
   accessToken:
-    "pk.eyJ1IjoiY3ljbGluZ2lzZnVuIiwiYSI6ImNrN2Z6cWIzNjA3bnAzZnBlbzVseWkxYWYifQ.U9iDr2Ez6ryAqDlkDK7jeA"
+    'pk.eyJ1IjoiY3ljbGluZ2lzZnVuIiwiYSI6ImNrN2Z6cWIzNjA3bnAzZnBlbzVseWkxYWYifQ.U9iDr2Ez6ryAqDlkDK7jeA'
 });
 
 class App extends React.Component {
   state = {
-    features: []
-  }
-
-   onDrawCreate = ({features}) => { 
-    console.log(features);
-    //when it is created take the layer, transform to geojson and stringify
-    this.setState((currentState) => {
-      return {features: [...currentState.features, features]}
-    })
+    features: [],
+    selectedMarker:null
   };
 
-   onDrawUpdate = ({ features }) => {
+  onDrawCreate = ({ features }) => {
+    console.log(features);
+    //when it is created take the layer, transform to geojson and stringify
+    this.setState(currentState => {
+      return { features: [...currentState.features, features] };
+    });
+  };
+
+  onDrawUpdate = ({ features }) => {
     // console.log(features);
   };
 
   render() {
-    const savedRoute = JSON.parse(localStorage.getItem('features'))
-    console.log(savedRoute)
+    const savedRoute = JSON.parse(localStorage.getItem('features'));
+
     return (
-    <div>
-      <h2>Welcome to react-mapbox-gl-draw</h2>
-      <Map
-        style="mapbox://styles/mapbox/streets-v9" // eslint-disable-line
-        containerStyle={{
-          height: "600px",
-          width: "100vw"
-        }}
-      >
-        <DrawControl onDrawCreate={this.onDrawCreate} onDrawUpdate={this.onDrawUpdate} />
-        {/* {savedRoute[0][0].geometry &&  */}
-        {/* <div> */}
-        <Layer type='line' id='savedRoute'>
-          <Feature coordinates={savedRoute[0][0].geometry.coordinates} />
-        </Layer>
-        {/* <Layer type="symbol"
-  layout={{ "icon-image": "harbor-15" }} id='savedRoute'>
-          <Feature coordinates={savedRoute[1][0].geometry.coordinates} />
-        </Layer> */}
-        {/* </div> */}
-        {/* } */}
-      </Map>
-    </div>
-  );
-      }
-      
+      <div>
+        <h2>Welcome to react-mapbox-gl-draw</h2>
+        <Map
+          style='mapbox://styles/mapbox/streets-v9' // eslint-disable-line
+          containerStyle={{
+            height: '600px',
+            width: '100vw'
+          }}
+          center={[-2.2426, 53.4808]}
+          >
+          <DrawControl
+            onDrawCreate={this.onDrawCreate}
+            onDrawUpdate={this.onDrawUpdate}
+          />
+          {savedRoute[0][0].geometry && (
+            <div>
+              <Layer
+                type='line'
+                id='geojson'
+                // geoJSONSourceOptions={geoJSON}
+                // sourceLayer={JSON.stringify({ 'id': 'route', 'type': 'line', 'source': 'geojson', 'paint': {'line-color': 'blue' }, 'filter': ['==', '$type', 'line'] })}
+              >
+                <Feature coordinates={savedRoute[0][0].geometry.coordinates} />
+              </Layer>
+              {/* <Layer
+                type='symbol'
+                layout={{ 'icon-image': 'harbor-15' }}
+                id='savedRoute'>
+                <Feature coordinates={savedRoute[1][0].geometry.coordinates} />
+                <Feature coordinates={savedRoute[1][0].geometry.coordinates} />
+              </Layer>  */}
+               <Marker coordinates={savedRoute[1][0].geometry.coordinates}>
+                <img src={location} height='30px'/>
+              </Marker> 
+               <Marker coordinates={savedRoute[2][0].geometry.coordinates}>
+                <img src={location} height='30px'/>
+              </Marker>
+            </div>
+          )}
+        </Map>
+      </div>
+    );
+  }
+
   componentDidUpdate() {
-    localStorage.setItem('features', JSON.stringify(this.state.features))
+    localStorage.setItem('features', JSON.stringify(this.state.features));
   }
 }
 
